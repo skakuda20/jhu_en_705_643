@@ -1,2 +1,6 @@
 .ipynb_checkpoints/
 data/
+venv/
+
+yolo5/
+datasets/
