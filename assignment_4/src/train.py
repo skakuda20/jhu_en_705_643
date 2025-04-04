@@ -16,10 +16,21 @@ Functions:
 
 import os
 import copy
+import csv
+from pathlib import Path
 from tqdm import tqdm
 import torch
 
-def train(dataloaders, model, criterion, optimizer, scheduler, device, optim_model_wts_dir, n_epochs=30):
+from utils import get_project_root_path
+
+def train(dataloaders,
+          model,
+          criterion,
+          optimizer,
+          scheduler,
+          device,
+          optim_model_wts_dir,
+          n_epochs=30):
     """
     Train and validate the model over a given number of epochs.
     
@@ -33,7 +44,8 @@ def train(dataloaders, model, criterion, optimizer, scheduler, device, optim_mod
         model (torch.nn.Module): The video classification model to be trained.
         criterion (callable): Loss function.
         optimizer (torch.optim.Optimizer): Optimizer for updating model weights.
-        scheduler (torch.optim.lr_scheduler): Learning rate scheduler, which adjusts the learning rate based on validation loss.
+        scheduler (torch.optim.lr_scheduler): Learning rate scheduler, 
+            which adjusts the learning rate based on validation loss.
         device (torch.device): Device (CPU or GPU) on which to perform training.
         optim_model_wts_dir (str): Directory to save the best model weights.
         n_epochs (int, optional): Number of training epochs. Default is 30.
@@ -41,8 +53,10 @@ def train(dataloaders, model, criterion, optimizer, scheduler, device, optim_mod
     Returns:
         tuple: (model, loss_hist, acc_hist)
             - model (torch.nn.Module): The trained model loaded with the best validation weights.
-            - loss_hist (dict): Dictionary containing lists of training and validation losses for each epoch.
-            - acc_hist (dict): Dictionary containing lists of training and validation accuracies for each epoch.
+            - loss_hist (dict): Dictionary containing lists of training and validation losses 
+                for each epoch.
+            - acc_hist (dict): Dictionary containing lists of training and validation 
+                accuracies for each epoch.
     """
     loss_hist = {'train': [], 'val': []}
     acc_hist = {'train': [], 'val': []}
@@ -50,13 +64,27 @@ def train(dataloaders, model, criterion, optimizer, scheduler, device, optim_mod
     best_model_wts = copy.deepcopy(model.state_dict())
     best_val_acc = 0.0
 
+    root_path = get_project_root_path()
+
+    txt_log_file = Path(root_path, "output", "training_terminal_output.txt")
+    csv_log_file = Path(root_path, "output", "training_logs.csv")
+    with open(csv_log_file, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(["Epoch", "Train Loss", "Val Loss", "Accuracy"])
+
     for epoch in range(n_epochs):
         current_lr = get_learning_rate(optimizer)
-        print('Epoch {}/{}; Current learning rate {}'.format(epoch+1, n_epochs, current_lr))
+        log_message(txt_log_file,
+                    f'Epoch {epoch+1}/{n_epochs}; Current learning rate {current_lr}')
+        print(f'Epoch {epoch+1}/{n_epochs}; Current learning rate {current_lr}\n')
 
         # Training phase
         model.train()
-        train_loss, train_accuracy = get_epoch_loss(model, criterion, dataloaders['train'], device, optimizer)
+        train_loss, train_accuracy = get_epoch_loss(model,
+                                                    criterion,
+                                                    dataloaders['train'],
+                                                    device,
+                                                    optimizer)
         loss_hist['train'].append(train_loss)
         acc_hist['train'].append(train_accuracy)
 
@@ -70,7 +98,7 @@ def train(dataloaders, model, criterion, optimizer, scheduler, device, optim_mod
             best_model_name = 'best_model_wts.pt'
             best_model_path = os.path.join(optim_model_wts_dir, best_model_name)
             torch.save(best_model_wts, best_model_path)
-            print('Best model weights are updated at epoch {}!'.format(epoch+1))
+            print(f'Best model weights are updated at epoch {epoch+1}!')
         loss_hist['val'].append(val_loss)
         acc_hist['val'].append(val_accuracy)
 
@@ -80,7 +108,16 @@ def train(dataloaders, model, criterion, optimizer, scheduler, device, optim_mod
             print('Loading best model weights!')
             model.load_state_dict(best_model_wts)
 
-        print("train loss: {:.6f}, val loss: {:.6f}, accuracy: {:.2f}".format(train_loss, val_loss, 100*val_accuracy))
+        log_to_csv(csv_log_file, epoch, train_loss, val_loss, 100*val_accuracy)
+        log_message(txt_log_file, f"train loss: {train_loss:.6f}, "
+                                    f"val loss: {val_loss:.6f}, "
+                                    f"accuracy: {100*val_accuracy:.2f}")
+        log_message(txt_log_file, "-"*60)
+
+        print(f"train loss: {train_loss:.6f}, "
+              f"val loss: {val_loss:.6f}, "
+              f"accuracy: {100*val_accuracy:.2f}"
+            )
         print("-" * 60)
         print()
 
@@ -124,7 +161,8 @@ def get_batch_loss(criterion, output, target, optimizer=None):
         criterion (callable): Loss function.
         output (torch.Tensor): Model outputs for the mini-batch.
         target (torch.Tensor): True labels for the mini-batch.
-        optimizer (torch.optim.Optimizer, optional): Optimizer to update model weights. If None, no backpropagation is performed.
+        optimizer (torch.optim.Optimizer, optional): Optimizer to update model weights. 
+                                                        If None, no backpropagation is performed.
     
     Returns:
         tuple: (loss_value, n_batch_correct_preds)
@@ -152,7 +190,8 @@ def get_epoch_loss(model, criterion, dataloader, device, optimizer=None):
         criterion (callable): Loss function.
         dataloader (torch.utils.data.DataLoader): DataLoader for the dataset.
         device (torch.device): Device (CPU or GPU) on which to perform computations.
-        optimizer (torch.optim.Optimizer, optional): If provided, used to update model weights during training.
+        optimizer (torch.optim.Optimizer, optional): If provided, used to update
+                                                        model weights during training.
 
     Returns:
         tuple: (loss, accuracy)
@@ -173,3 +212,31 @@ def get_epoch_loss(model, criterion, dataloader, device, optimizer=None):
     loss = running_loss / float(len_dataset)
     accuracy = running_total_correct_preds / float(len_dataset)
     return loss, accuracy
+
+
+def log_to_csv(log_file, epoch, train_loss, val_loss, accuracy):
+    """
+    Saves out loss and accuracy values at current epoch to a CSV file.
+
+    Args:
+        log_file (str or Path): path to CSV file.
+        epoch (int): Current epoch
+        train_loss (float): Current train loss
+        val_loss (float): Current val loss
+        accuracy (float): Current accuracy
+    """
+    with open(log_file, "a", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow([epoch, train_loss, val_loss, accuracy])
+
+
+def log_message(log_file, message):
+    """
+    Saves out message to txt log file.
+
+    Args:
+        log_file (str or Path):  Path to CSV file.
+        message (str): Message to save to txt log file.
+    """
+    with open(log_file, "a", encoding="utf-8") as f:
+        f.write(message + "\n")
