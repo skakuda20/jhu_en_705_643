@@ -1,0 +1,75 @@
+Epoch 1/25; Current learning rate 3e-05
+train loss: 3.506910, val loss: 2.987098, accuracy: 42.30
+------------------------------------------------------------
+Epoch 2/25; Current learning rate 3e-05
+train loss: 2.743498, val loss: 2.310033, accuracy: 64.57
+------------------------------------------------------------
+Epoch 3/25; Current learning rate 3e-05
+train loss: 2.252832, val loss: 1.888516, accuracy: 73.69
+------------------------------------------------------------
+Epoch 4/25; Current learning rate 3e-05
+train loss: 1.870382, val loss: 1.689667, accuracy: 78.18
+------------------------------------------------------------
+Epoch 5/25; Current learning rate 3e-05
+train loss: 1.536057, val loss: 1.306782, accuracy: 83.71
+------------------------------------------------------------
+Epoch 6/25; Current learning rate 3e-05
+train loss: 1.246508, val loss: 0.970313, accuracy: 89.69
+------------------------------------------------------------
+Epoch 7/25; Current learning rate 3e-05
+train loss: 0.998917, val loss: 0.935754, accuracy: 87.29
+------------------------------------------------------------
+Epoch 8/25; Current learning rate 3e-05
+train loss: 0.786533, val loss: 0.911313, accuracy: 86.40
+------------------------------------------------------------
+Epoch 9/25; Current learning rate 3e-05
+train loss: 0.626144, val loss: 0.770538, accuracy: 88.64
+------------------------------------------------------------
+Epoch 10/25; Current learning rate 3e-05
+train loss: 0.486915, val loss: 0.565957, accuracy: 90.88
+------------------------------------------------------------
+Epoch 11/25; Current learning rate 3e-05
+train loss: 0.403553, val loss: 0.699182, accuracy: 87.14
+------------------------------------------------------------
+Epoch 12/25; Current learning rate 3e-05
+train loss: 0.320861, val loss: 0.577776, accuracy: 88.79
+------------------------------------------------------------
+Epoch 13/25; Current learning rate 3e-05
+train loss: 0.263611, val loss: 0.616965, accuracy: 89.69
+------------------------------------------------------------
+Epoch 14/25; Current learning rate 3e-05
+train loss: 0.222582, val loss: 0.600827, accuracy: 87.89
+------------------------------------------------------------
+Epoch 15/25; Current learning rate 3e-05
+train loss: 0.207951, val loss: 0.876115, accuracy: 82.96
+------------------------------------------------------------
+Epoch 16/25; Current learning rate 3e-05
+train loss: 0.165099, val loss: 0.681363, accuracy: 86.40
+------------------------------------------------------------
+Epoch 17/25; Current learning rate 1.5e-05
+train loss: 0.367442, val loss: 0.588417, accuracy: 89.54
+------------------------------------------------------------
+Epoch 18/25; Current learning rate 1.5e-05
+train loss: 0.294540, val loss: 0.459899, accuracy: 92.68
+------------------------------------------------------------
+Epoch 19/25; Current learning rate 1.5e-05
+train loss: 0.246438, val loss: 0.498525, accuracy: 91.18
+------------------------------------------------------------
+Epoch 20/25; Current learning rate 1.5e-05
+train loss: 0.224868, val loss: 0.430383, accuracy: 92.83
+------------------------------------------------------------
+Epoch 21/25; Current learning rate 1.5e-05
+train loss: 0.206723, val loss: 0.469199, accuracy: 91.93
+------------------------------------------------------------
+Epoch 22/25; Current learning rate 1.5e-05
+train loss: 0.171741, val loss: 0.397089, accuracy: 92.53
+------------------------------------------------------------
+Epoch 23/25; Current learning rate 1.5e-05
+train loss: 0.151339, val loss: 0.734705, accuracy: 85.35
+------------------------------------------------------------
+Epoch 24/25; Current learning rate 1.5e-05
+train loss: 0.140063, val loss: 0.385494, accuracy: 93.27
+------------------------------------------------------------
+Epoch 25/25; Current learning rate 1.5e-05
+train loss: 0.130367, val loss: 0.563733, accuracy: 88.64
+------------------------------------------------------------
